@@ -1,0 +1,29 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager;
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <div class="main">
+        <div class="top-row px-4">
+            <button @onclick="OpenLoginPage" class="btn btn-dark">Login</button>
+            <button @onclick="OpenRegisterPage" class="btn btn-dark">Register</button>
+        </div>
+
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+</div>
+@code{
+    private void OpenRegisterPage()
+    {
+        NavigationManager.NavigateTo("register");
+    }
+    private void OpenLoginPage()
+    {
+        NavigationManager.NavigateTo("login");
+    }
+}

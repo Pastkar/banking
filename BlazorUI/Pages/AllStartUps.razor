@@ -1,0 +1,37 @@
+﻿@page "/allStartUps"
+@using CommonModels.Models
+
+<h3>AllStartUps</h3>
+
+<table class="table  bg-light table-hover">
+    <thead>
+        <tr>
+            <th>Name StartUp</th>
+            <th>Company</th>
+        </tr>
+    </thead>    
+    <tbody>
+        @foreach (var startUp in startUps)
+        {
+            <tr @onclick="() => OpenStartUp(startUp.Id)">
+                <td>@startUp.CompanyId</td>
+                <td>@startUp.StartUpName</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<StartUpGetModel> startUps = new List<StartUpGetModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        startUps.Add(new StartUpGetModel() { Id = 0, CompanyId = 2, StartUpName = "hatiko" });
+        startUps.Add(new StartUpGetModel() { Id = 0, CompanyId = 2, StartUpName = "hatiko" });
+        startUps.Add(new StartUpGetModel() { Id = 0, CompanyId = 2, StartUpName = "hatiko" });
+    }
+    private void OpenStartUp(int id)
+    {
+
+    }
+
+}

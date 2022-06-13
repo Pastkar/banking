@@ -1,0 +1,64 @@
+﻿@page "/register"
+@using CommonModels.Models
+@using BlazorUI.Interfaces
+@inject IClientServices clientService;
+@inject NavigationManager navigationManager;
+
+@if (firstPartBool)
+{
+    <h3>Are you a client or a company</h3>
+    <input type="checkbox" @bind="valueClient" @onclick="ShowSecondPart" /><span> client</span>
+    <br />
+    <input type="checkbox" @bind="valueCompany" @onclick="ShowSecondPart" /><span> company</span>
+}
+else
+{
+    <div class="form-outline mb-4">
+        <input type="text" class="form-control" placeholder="@(valueClient?"Login":"Name Company")" @bind="login" />
+    </div>
+
+    <div class="form-outline mb-4">
+        <input type="password" class="form-control" placeholder="Password" @bind="password" />
+    </div>
+    <div class="form-outline mb-4">
+        <input type="password" class="form-control" placeholder="Confirm Password" @bind="confirmPassword" />
+    </div>
+    <p>@errorMessage</p>
+    <button type="button" class="btn btn-primary btn-block mb-4" @onclick="CheckInformation">Sign in</button>
+}
+
+@code {
+    private bool valueCompany;
+    private bool valueClient;
+    private string login;
+    private string password;
+    private string confirmPassword;
+    private string errorMessage;
+    private bool firstPartBool = true;
+
+    private void ShowSecondPart()
+    {
+        firstPartBool = false;
+    }
+    private async void CheckInformation()
+    {
+        var loginCheck = "dima";
+        var check = clientService.CheckClientByName(login);
+        if (login == loginCheck)
+        {
+            errorMessage = "this login is used";
+            return;
+        }
+        if (password != confirmPassword)
+        {
+            errorMessage = "Passwords do not match";
+            return;
+        }
+        if (valueClient)
+        {
+            await clientService.CreateClientAsync(new ClientCreateModel() { Login = login, Password = password });
+        }
+        navigationManager.NavigateTo("/");
+    }
+
+}
