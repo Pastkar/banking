@@ -15,6 +15,7 @@ namespace BusinessLogic.Interfaces
         Task DeleteAsync(int id);
         Task UpdateAsync(CompanyCreateBL element, int id);
         Task<CompanyGetBL> ReadByNameAsync(string name);
+        Task<IEnumerable<StartUpGetBL>> GetStartUpsByCompanyId(int id);
 
     }
 }

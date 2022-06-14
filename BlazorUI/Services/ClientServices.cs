@@ -19,13 +19,29 @@ namespace BlazorUI.Services
 
         public async Task<bool> CheckClientByName(string name)
         {
-            var client = await httpClient.GetFromJsonAsync<IEnumerable<ClientGetModel>>("/Client/GetClientByName_" + name);
-            return true;
+            try
+            {
+                var client = await httpClient.GetFromJsonAsync<ClientGetModel>("api/Client/GetClientByName_" + name);
+                return true;
+            }
+            catch(Exception e)
+            {
+                if(e.Message == "Response status code does not indicate success: 404 (Not Found).")
+                {
+                    return false;
+                }
+                return false;
+            }
         }
 
         public async Task CreateClientAsync(ClientCreateModel clientCreate)
         {
             using var response = await httpClient.PostAsJsonAsync("api/Client/PostClient", clientCreate);
+        }
+
+        public async Task<ClientGetModel> GetClientByName(string name)
+        {
+            return await httpClient.GetFromJsonAsync<ClientGetModel>("api/Client/GetClientByName_" + name);
         }
 
         public async Task<IEnumerable<ClientGetModel>> GetClientsAsync()

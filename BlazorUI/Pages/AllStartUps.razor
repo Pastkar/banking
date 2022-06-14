@@ -1,21 +1,32 @@
 ﻿@page "/allStartUps"
 @using CommonModels.Models
+@using BlazorUI.Models
+@using BlazorUI.Interfaces
+@inject IStartUpServices startUpService;
+@inject LoginState loginState;
+@inject NavigationManager navigationManager;
 
 <h3>AllStartUps</h3>
 
-<table class="table  bg-light table-hover">
+<h2>Log in(User) if you want create contract with startup</h2>
+<table class="table  bg-light">
     <thead>
         <tr>
             <th>Name StartUp</th>
-            <th>Company</th>
+            <th>InterestRate</th>
+            <th></th>
         </tr>
-    </thead>    
+    </thead>
     <tbody>
         @foreach (var startUp in startUps)
         {
-            <tr @onclick="() => OpenStartUp(startUp.Id)">
-                <td>@startUp.CompanyId</td>
+            <tr>
                 <td>@startUp.StartUpName</td>
+                <td>@startUp.InterestRate%</td>
+                @if (loginState.IsLoggedIn && loginState.TypeUser == TypeUser.Client)
+                {
+                    <td><button class="btn btn-light" @onclick="() =>  CreateContract(startUp.Id)">Create Contract</button></td>
+                }
             </tr>
         }
     </tbody>
@@ -25,13 +36,15 @@
     private List<StartUpGetModel> startUps = new List<StartUpGetModel>();
     protected override async Task OnInitializedAsync()
     {
-        startUps.Add(new StartUpGetModel() { Id = 0, CompanyId = 2, StartUpName = "hatiko" });
-        startUps.Add(new StartUpGetModel() { Id = 0, CompanyId = 2, StartUpName = "hatiko" });
-        startUps.Add(new StartUpGetModel() { Id = 0, CompanyId = 2, StartUpName = "hatiko" });
+        await GetStartUps();
     }
-    private void OpenStartUp(int id)
+    private async Task GetStartUps()
     {
-
+        var list = await startUpService.GetStartUpsAsync();
+        startUps = list.ToList();
     }
-
+    private void CreateContract(int id)
+    {
+        navigationManager.NavigateTo("createContract/" + id);
+    }
 }

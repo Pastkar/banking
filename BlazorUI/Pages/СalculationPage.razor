@@ -1,0 +1,50 @@
+﻿@page "/calculation/{Id:int}"
+@using CommonModels.Models
+@using BlazorUI.Models
+@using BlazorUI.Interfaces
+@inject IContractServices contractService;
+
+<h3>СalculationPage</h3>
+<table class="table  bg-light table-hover">
+    <thead>
+        <tr>
+            <th>Client Id</th>
+            <th>Data Create</th>
+            <th>Term</th>
+            <th>Initial Amount</th>
+            <th>Current Amount</th>
+            <th>Per Month profit</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contract in contracts)
+        {
+            <tr>
+                <td>@contract.ClientId</td>
+                <td>@contract.CreateDateTime.ToString("MM/dd/yyyy")</td>
+                <td>@contract.TermInYear</td>
+                <td>@contract.InitialAmount</td>
+                <td>@contract.CurrentAmount</td>
+                <td>@contract.PerMonthProfit</td>
+                <th><button class="btn btn-light" @onclick="() =>  PayMonthleFee(contract.Id)">pay a monthly fee </button></th>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private List<ContractGetModel> contracts = new List<ContractGetModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        var list = await contractService.GetContractByStartUpId(Id);
+        contracts = list.ToList();
+    }
+    private async Task PayMonthleFee(int id)
+    {
+        var checkPay = await contractService.PayMonthlyFee(id);
+        contracts.Where(c => c.Id == id).First().CurrentAmount += contracts.Where(c => c.Id == id).First().PerMonthProfit;
+    }
+}

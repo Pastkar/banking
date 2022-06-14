@@ -1,4 +1,5 @@
 using BlazorUI.Interfaces;
+using BlazorUI.Models;
 using BlazorUI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -27,13 +28,29 @@ namespace BlazorUI
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var serverHttp = "https://localhost:44312/api";
+            var serverHttp = "https://banking20220614092437.azurewebsites.net/";
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
+            services.AddScoped<LoginState>();
             services.AddSingleton<ClientServices>();
             services.AddHttpClient<IClientServices, ClientServices>(client =>
+            {
+                client.BaseAddress = new Uri(serverHttp);
+            });
+            services.AddSingleton<CompanyServices>();
+            services.AddHttpClient<ICompanyServices, CompanyServices>(client =>
+            {
+                client.BaseAddress = new Uri(serverHttp);
+            });
+            services.AddSingleton<ContractServices>();
+            services.AddHttpClient<IContractServices, ContractServices>(client =>
+            {
+                client.BaseAddress = new Uri(serverHttp);
+            });
+            services.AddSingleton<StartUpServices>();
+            services.AddHttpClient<IStartUpServices, StartUpServices>(client =>
             {
                 client.BaseAddress = new Uri(serverHttp);
             });
@@ -49,7 +66,6 @@ namespace BlazorUI
             else
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 

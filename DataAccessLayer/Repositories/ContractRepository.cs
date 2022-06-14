@@ -62,9 +62,6 @@ namespace DataAccessLayer.Repositories
             }
 
         }
-        private int CalculationPerMonthProfit(int term, int ammount, int percent)
-        {
-            return ammount / (term * 12) + ammount * percent / 100 / 12;
-        }
+        private int CalculationPerMonthProfit(int term, int ammount, int percent) => ammount / (term * 12) + ammount * percent / 100 / 12;
     }
 }

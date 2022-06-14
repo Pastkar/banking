@@ -70,5 +70,23 @@ namespace Banking.Controllers
             await _companyService.UpdateAsync(_mapper.Map<CompanyCreateBL>(model), id);
             return Ok();
         }
+        [HttpGet]
+        [Route("GetCompanyByName_{name}")]
+        public async Task<IActionResult> GetByNameAsync(string name)
+        {
+            var result = _mapper.Map<CompanyGetModel>(await _companyService.ReadByNameAsync(name));
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
+        [HttpGet]
+        [Route("GetStartUpsByCompanyId_{id}")]
+        public async Task<IActionResult> GetStartUpsByCompanyId(int id)
+        {
+            var result = _mapper.Map<IEnumerable<StartUpGetModel>>(await _companyService.GetStartUpsByCompanyId(id));
+            if (result == null)
+                return NotFound();
+            return Ok(result);
+        }
     }
 }

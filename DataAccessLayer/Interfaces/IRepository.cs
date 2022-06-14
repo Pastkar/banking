@@ -11,7 +11,6 @@ namespace DataAccessLayer.Interfaces
         Task<IEnumerable<T>> ReadAllAsync();
         Task<T> ReadByIdAsync(int id);
         Task<T> ReadByNameAsync(string name);
-
         Task CreateAsync(T item);
         Task DeleteAsync(int id);
         Task UpdateAsync(T item, int id);

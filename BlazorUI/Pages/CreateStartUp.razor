@@ -1,0 +1,39 @@
+﻿@page "/createStartUp"
+@using CommonModels.Models
+@using BlazorUI.Models
+@using BlazorUI.Interfaces
+@inject IStartUpServices startUpService;
+@inject NavigationManager navigationManager;
+@inject LoginState loginState;
+
+<h3>CreateStartUp</h3>
+<div class="form-outline mb-4">
+    <input type="text" class="form-control" placeholder="Start Up Name" @bind="name" />
+</div>
+
+<div class="form-outline mb-4">
+    <input type="number" class="form-control" placeholder="Interest Rate" @bind="interestRate" />
+</div>
+<p>@errorMessage</p>
+<button type="button" class="btn btn-primary btn-block mb-4" @onclick="CheckInformation">Create Start Up</button>
+@code {
+    string name;
+    string errorMessage;
+    int interestRate;
+    private async Task CheckInformation()
+    {
+        if (name == null && interestRate < 0)
+        {
+            errorMessage = "fields are not filled";
+            return;
+        }
+        if (await startUpService.CheckStartUpByName(name) == true)
+        {
+            errorMessage = "this name is exists";
+            return;
+        }
+        await startUpService.CreateStartUpAsync(new StartUpCreateModel() { StartUpName = name, CompanyId = loginState.Company.Id, InterestRate = interestRate });
+        navigationManager.NavigateTo("/");
+    }
+
+}

@@ -1,4 +1,8 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@using BlazorUI.Models
+@inject LoginState loginState;
+@inject NavigationManager NavigationManager;
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">BlazorUI</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -9,29 +13,55 @@
     <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+                Home
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="allStartUps">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> All StartUps
+                All StartUps
             </NavLink>
         </li>
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="users">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> All Users
+                All Users
             </NavLink>
         </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="companies">
+                All companies
+            </NavLink>
+        </li>
+        @if (loginState.IsLoggedIn == true && loginState.TypeUser == TypeUser.Company)
+        {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="createStartUp">
+                    Create StartUp
+                </NavLink>
+            </li>
+            <li class="nav-item px-3 nav-link" @onclick="AboutCompany">
+                <NavLink class="nav-link">
+                    About my company
+                </NavLink>
+            </li>
+        }
+        @if (loginState.IsLoggedIn == true && loginState.TypeUser == TypeUser.Client)
+        {
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="contracts">
+                    My Contracts
+                </NavLink>
+            </li>
+        }
     </ul>
 </div>
 
 @code {
     private bool collapseNavMenu = true;
-
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
+    private void AboutCompany() => NavigationManager.NavigateTo("/aboutCompany/" + loginState.Company.Id);
 }

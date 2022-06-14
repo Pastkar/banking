@@ -1,0 +1,46 @@
+﻿@page  "/contracts"
+@using CommonModels.Models
+@using BlazorUI.Models
+@using BlazorUI.Interfaces
+@inject IContractServices contractService
+@inject IStartUpServices startUpService
+@inject LoginState loginState
+
+<h3>MyContracts</h3>
+
+<table class="table  bg-light table-hover">
+    <thead>
+        <tr>
+            <th>StartUpId</th>
+            <th>Data Create</th>
+            <th>Term</th>
+            <th>Initial Amount</th>
+            <th>Current Amount</th>
+            <th>Per Month profit</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contract in contracts)
+        {
+            <tr>
+                <td>@contract.StartUpId</td>
+                <td>@contract.CreateDateTime.ToString("MM/dd/yyyy")</td>
+                <td>@contract.TermInYear</td>
+                <td>@contract.InitialAmount</td>
+                <td>@contract.CurrentAmount</td>
+                <td>@contract.PerMonthProfit</td>
+                `
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    List<ContractGetModel> contracts = new List<ContractGetModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        var list = await contractService.GetContractByUserId(loginState.Client.Id);
+        contracts = list.ToList();
+    }
+}

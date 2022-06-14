@@ -8,7 +8,7 @@ namespace BlazorUI.Models
 {
     public class LoginState
     {
-        public bool IsLoggedIn { get; set; }
+        public bool IsLoggedIn{ get; set; }
         public ClientGetModel Client { get; set; }
         public CompanyGetModel Company { get; set; }
         public TypeUser TypeUser { get; set; }
@@ -35,6 +35,13 @@ namespace BlazorUI.Models
         private void NotifyStateChanged()
         {
             OnChange?.Invoke();
+        }
+        public void LogOut()
+        {
+            Company = null;
+            IsLoggedIn = false;
+            Client = null;
+            NotifyStateChanged();
         }
     }
 }

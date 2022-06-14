@@ -1,0 +1,53 @@
+﻿@page "/aboutCompany/{id:int}"
+@using CommonModels.Models
+@using BlazorUI.Models
+@using BlazorUI.Interfaces
+@inject ICompanyServices companyService;
+@inject LoginState loginState;
+@inject NavigationManager navigationManager;
+
+
+<h3>Name Company: @company.CompanyName </h3>
+<table class="table  bg-light table-hover">
+    <thead>
+        <tr>
+            <th>Name StartUp</th>
+            <th>InterestRate</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var startUp in startUps)
+        {
+            <tr>
+                <td>@startUp.StartUpName</td>
+                <td>@startUp.InterestRate%</td>
+                @if (loginState.Company.Id == id)
+                {
+                    <td><button class="btn btn-light" @onclick="() =>  GoToCalclation(startUp.Id)">calculation page</button></td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    List<StartUpGetModel> startUps = new List<StartUpGetModel>();
+    CompanyGetModel company = new CompanyGetModel();
+    protected override async Task OnInitializedAsync()
+    {
+        await init();
+    }
+    private async Task init()
+    {
+        company = await companyService.GetCompanyById(id);
+        var list = await companyService.GetStartUpsByCompanyId(id);
+        startUps = list?.ToList();
+    }
+    private void GoToCalclation(int id)
+    {
+        navigationManager.NavigateTo("calculation/" + id);
+    }
+}

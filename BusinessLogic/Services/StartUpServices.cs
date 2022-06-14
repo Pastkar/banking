@@ -65,9 +65,17 @@ namespace BusinessLogic.Services
             _dB.Dispose();
         }
 
-        public Task<StartUpGetBL> ReadByNameAsync(string name)
+        public async Task<StartUpGetBL> ReadByNameAsync(string name)
         {
-            throw new NotImplementedException();
+            var item = await _dB.StartUps.ReadByNameAsync(name);
+            var result = _mapper.Map<StartUpGetBL>(item);
+            return result;
+        }
+
+        public async Task<int> CountContractsByStartUpId(int id)
+        {
+            var list = _mapper.Map<IEnumerable<ContractGetBL>>(await _dB.Contracts.ReadAllAsync());
+            return list.Where(contract => contract.StartUpId == id).Count();
         }
     }
 }

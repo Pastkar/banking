@@ -1,0 +1,43 @@
+﻿@page "/companies"
+@using CommonModels.Models
+@using BlazorUI.Interfaces
+@inject ICompanyServices companyService;
+@inject NavigationManager navigationManager;
+
+<h3>Companies</h3>
+
+<table class="table table-striped table-bordered bg-light">
+    <thead>
+        <tr>
+            <th>Name Company</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var company in companyList)
+        {
+            <tr>
+                <td>@company.CompanyName</td>
+                <td><button class="btn btn-light" @onclick="() =>  OpenInfo(company.Id)">About company</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@code {
+    private List<CompanyGetModel> companyList = new List<CompanyGetModel>();
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCompanies();
+    }
+    private async Task GetCompanies()
+    {
+        var list = await companyService.GetCompanysAsync();
+        companyList = list.ToList();
+    }
+    private void OpenInfo(int index)
+    {
+        navigationManager.NavigateTo("aboutCompany/" + index);
+    }
+}

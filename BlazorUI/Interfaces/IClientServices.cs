@@ -11,6 +11,6 @@ namespace BlazorUI.Interfaces
         Task<IEnumerable<ClientGetModel>> GetClientsAsync();
         Task CreateClientAsync(ClientCreateModel clientCreate);
         Task<bool> CheckClientByName(string name);
-
+        Task<ClientGetModel> GetClientByName(string name);
     }
 }

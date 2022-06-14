@@ -15,5 +15,8 @@ namespace BusinessLogic.Interfaces
         Task DeleteAsync(int id);
         Task UpdateAsync(ContractCreateBL element, int id);
         Task CreatePayments(int id);
+        Task<IEnumerable<ContractGetBL>> ContractsGetByUserId(int id);
+        Task<IEnumerable<ContractGetBL>> ContractsGetByStartUpId(int id);
+
     }
 }

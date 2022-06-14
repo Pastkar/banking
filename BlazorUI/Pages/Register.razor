@@ -2,6 +2,7 @@
 @using CommonModels.Models
 @using BlazorUI.Interfaces
 @inject IClientServices clientService;
+@inject ICompanyServices companyService;
 @inject NavigationManager navigationManager;
 
 @if (firstPartBool)
@@ -36,19 +37,10 @@ else
     private string errorMessage;
     private bool firstPartBool = true;
 
-    private void ShowSecondPart()
-    {
-        firstPartBool = false;
-    }
+    private void ShowSecondPart() => firstPartBool = false;
+    
     private async void CheckInformation()
     {
-        var loginCheck = "dima";
-        var check = clientService.CheckClientByName(login);
-        if (login == loginCheck)
-        {
-            errorMessage = "this login is used";
-            return;
-        }
         if (password != confirmPassword)
         {
             errorMessage = "Passwords do not match";
@@ -56,9 +48,28 @@ else
         }
         if (valueClient)
         {
-            await clientService.CreateClientAsync(new ClientCreateModel() { Login = login, Password = password });
+            if (await clientService.CheckClientByName(login) == true)
+            {
+                errorMessage = "this account is exists";
+            }
+            else
+            {
+                await clientService.CreateClientAsync(new ClientCreateModel() { Login = login, Password = password });
+                navigationManager.NavigateTo("/");
+            }
         }
-        navigationManager.NavigateTo("/");
+        else if (valueCompany)
+        {
+            if (await companyService.CheckCompanyByName(login) == true)
+            {
+                errorMessage = "this account is exists";
+            }
+            else
+            {
+                await companyService.CreateCompanyAsync(new CompanyCreateModel() { CompanyName = login, Password = password });
+                navigationManager.NavigateTo("/");
+            }
+        }
     }
 
 }

@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@using BlazorUI.Models
 @inject NavigationManager NavigationManager;
+@inject LoginState loginState;
 
 <div class="page">
     <div class="sidebar">
@@ -7,11 +9,28 @@
     </div>
 
     <div class="main">
+        
         <div class="top-row px-4">
-            <button @onclick="OpenLoginPage" class="btn btn-dark">Login</button>
-            <button @onclick="OpenRegisterPage" class="btn btn-dark">Register</button>
+            @if (loginState.IsLoggedIn == false)
+            {
+                <button @onclick="OpenLoginPage" class="btn btn-dark">Login</button>
+                <button @onclick="OpenRegisterPage" class="btn btn-dark">Register</button>
+            }
+            else
+            {
+                if (loginState.TypeUser == TypeUser.Client)
+                {
+                    <span> @loginState.Client.Login</span>
+                }
+                else
+                {
+                    <span>@loginState.Company.CompanyName</span>
+                }
+                <button type="submit"  class="btn btn-dark" @onclick=@HandleLogout>
+                    Logout
+                </button>
+            }
         </div>
-
         <div class="content px-4">
             @Body
         </div>
@@ -25,5 +44,11 @@
     private void OpenLoginPage()
     {
         NavigationManager.NavigateTo("login");
+    }
+    private void HandleLogout()
+    {
+        loginState.LogOut();
+        NavigationManager.NavigateTo("/");
+
     }
 }

@@ -1,0 +1,45 @@
+﻿@page "/createContract/{id:int}"
+@using CommonModels.Models
+@using BlazorUI.Models
+@using BlazorUI.Interfaces
+@inject IStartUpServices startUpService;
+@inject IContractServices contractService;
+@inject LoginState loginState;
+@inject NavigationManager navigationManager;
+
+
+<h3>CreateContract</h3>
+<h4>StartUp: @startUp.StartUpName </h4>
+<h4>Interest Rate: @startUp.InterestRate%</h4>
+<div class="form-outline mb-4">
+    Ammount
+    <input type="number" class="form-control" placeholder="Ammount" @bind="ammount" />
+</div>
+<div class="form-outline mb-4">
+    Term in year
+    <input type="number" class="form-control" placeholder="Term in year" @bind="term" />
+</div>
+<p>@errorMessage</p>
+<button type="button" class="btn btn-primary btn-block mb-4" @onclick="CheckInformation">Create Contract</button>
+@code {
+    private int ammount;
+    private int term;
+    private string errorMessage;
+    [Parameter]
+    public int id { get; set; }
+    StartUpGetModel startUp = new StartUpGetModel();
+    protected override async Task OnInitializedAsync()
+    {
+        startUp = await startUpService.GetByIdAsync(id);
+    }
+    private async Task CheckInformation()
+    {
+        if (ammount <= 0 && term <= 0)
+        {
+            errorMessage = "inncorect value field";
+            return;
+        }
+        await contractService.CreateContractAsync(new ContractCreateModel() { ClientId = loginState.Client.Id, StartUpId = startUp.Id, InitialAmount = ammount, TermInYear = term,CreateDateTime = DateTime.Now });
+        navigationManager.NavigateTo("/");
+    }
+}

@@ -23,11 +23,31 @@ namespace Banking.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        [Route("GetContaracts")]
-        public async Task<IActionResult> GetCompaniesAllAsync()
+        [Route("GetContacts")]
+        public async Task<IActionResult> GetAllContactsAsync()
         {
             List<ContractGetModel> list = null;
             list = _mapper.Map<List<ContractGetModel>>(await _contractService.ReadAllAsync());
+            if (list == null)
+                return NotFound();
+            return Ok(list);
+        }
+        [HttpGet]
+        [Route("GetContactsByUserId_{id}")]
+        public async Task<IActionResult> GetContactsByUserId(int id)
+        {
+            List<ContractGetModel> list = null;
+            list = _mapper.Map<List<ContractGetModel>>(await _contractService.ContractsGetByUserId(id));
+            if (list == null)
+                return NotFound();
+            return Ok(list);
+        }
+        [HttpGet]
+        [Route("GetContactsByStartUpId_{id}")]
+        public async Task<IActionResult> GetContactsByStartUpId(int id)
+        {
+            List<ContractGetModel> list = null;
+            list = _mapper.Map<List<ContractGetModel>>(await _contractService.ContractsGetByStartUpId(id));
             if (list == null)
                 return NotFound();
             return Ok(list);
@@ -61,14 +81,14 @@ namespace Banking.Controllers
             await _contractService.DeleteAsync(id);
             return NoContent();
         }
-        [HttpPut]
-        [Route("PutAddPeymentById_{id}")]
+        [HttpGet]
+        [Route("AddPeymentById_{id}")]
         public async Task<IActionResult> UpdateContractAsync(int id)
         {
             if (await _contractService.ReadByIdAsync(id) == null)
                 return NotFound();
             await _contractService.CreatePayments(id);
-            return Ok();    
+            return Ok(true);    
         }
     }
 }

@@ -1,22 +1,85 @@
 ﻿@page "/login"
 @using BlazorUI.Models
+@using CommonModels.Models
+@using BlazorUI.Interfaces
+@inject IClientServices clientService;
+@inject ICompanyServices companyService;
+@inject NavigationManager navigationManager;
 @inject LoginState loginState;
 
-<form>
+
+@if (firstPartBool)
+{
+    <h3>Are you a client or a company</h3>
+    <input type="checkbox" @bind="valueClient" @onclick="ShowSecondPart" /><span> client</span>
+    <br />
+    <input type="checkbox" @bind="valueCompany" @onclick="ShowSecondPart" /><span> company</span>
+}
+else
+{
     <div class="form-outline mb-4">
-        <input type="text" class="form-control" placeholder="Login" />
+        <input type="text" class="form-control" placeholder="@(valueClient?"Login":"Name Company")" @bind="login" />
     </div>
 
     <div class="form-outline mb-4">
-        <input type="password" class="form-control" placeholder="Password" />
+        <input type="password" class="form-control" placeholder="Password" @bind="password" />
     </div>
+    <p>@errorMessage</p>
+    <button type="button" class="btn btn-primary btn-block mb-4" @onclick="CheckInformation">Log in</button>
+}
 
-    <button type="button" class="btn btn-primary btn-block mb-4" @onclick="SignIn">Sign in</button>
-</form>
 
 @code {
-    private void SignIn()
+    private bool valueCompany;
+    private bool valueClient;
+    private string login;
+    private string password;
+    private string errorMessage;
+    private bool firstPartBool = true;
+
+    private void ShowSecondPart() => firstPartBool = false;
+
+    private async void CheckInformation()
     {
-       
+        if (valueClient)
+        {
+            if (await clientService.CheckClientByName(login) == true)
+            {
+                var client = await clientService.GetClientByName(login);
+                if (client.Password == password)
+                {
+                    loginState.SetLoginClient(true, client);
+                    navigationManager.NavigateTo("/");
+                }
+                else
+                {
+                    errorMessage = "password incorrect";
+                }
+            }
+            else
+            {
+                errorMessage = "this account is not exists";
+            }
+        }
+        else if (valueCompany)
+        {
+            if (await companyService.CheckCompanyByName(login) == true)
+            {
+                var company = await companyService.GetCompanyByName(login);
+                if(company.Password == password)
+                {
+                    loginState.SetLoginCompany(true, company);
+                    navigationManager.NavigateTo("/");
+                }
+                else
+                {
+                    errorMessage = "password incorrect";
+                }
+            }
+            else
+            {
+                errorMessage = "this account is not exists";
+            }
+        }
     }
 }

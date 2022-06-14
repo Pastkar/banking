@@ -74,5 +74,17 @@ namespace BusinessLogic.Services
                 await _dB.SaveAsync();
                 }
         }
+
+        public async Task<IEnumerable<ContractGetBL>> ContractsGetByUserId(int id)
+        {
+            var list = _mapper.Map<IEnumerable<ContractGetBL>>(await _dB.Contracts.ReadAllAsync());
+            return list.Where(contract => contract.ClientId == id);
+        }
+
+        public async Task<IEnumerable<ContractGetBL>> ContractsGetByStartUpId(int id)
+        {
+            var list = _mapper.Map<IEnumerable<ContractGetBL>>(await _dB.Contracts.ReadAllAsync());
+            return list.Where(contract => contract.StartUpId == id);
+        }
     }
 }
